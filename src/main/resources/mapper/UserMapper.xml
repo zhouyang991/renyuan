@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.renyuan.mapper.UserMapper">
+    <resultMap id="BaseColumn" type="com.test.renyuan.entity.User">
+        <id property="userid" column="userid"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="password" column="password"/>
+
+      
+        <association property="dormitory" javaType="com.test.renyuan.entity.Dormitory">
+            <id property="doid" column="doid"/>
+            <result property="doname" column="doname"/>
+
+        </association>
+    </resultMap>
+    <sql id="base">
+        du.do_id ,
+du.u_id
+    </sql>
+
+    <sql id="userColumn">
+        u.userid,
+u.name,
+u.sex,
+u.age,
+u.password
+    </sql>
+    <sql id="DormitoryColumn">
+        d.doid,
+d.doname
+    </sql>
+    <select id="findAll" resultMap="BaseColumn">
+        select
+        <include refid="base" />,
+        <include refid="userColumn" />,
+        <include refid="DormitoryColumn" />
+        from Dormitory_User du
+        LEFT JOIN `user` u on u.userid=du.u_id
+        LEFT join Dormitory d on
+        d.doid=du.do_id
+    </select>
+<select id="find" resultType="com.test.renyuan.entity.User">
+    select * from user;
+</select>
+    <insert id="insert" parameterType="com.test.renyuan.entity.User">
+        INSERT INTO user (userid,name,sex,age,password) VALUES (#{userid},#{name},#{sex},#{age},#{password});
+    </insert>
+
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM user WHERE userid = #{userid};
+    </delete>
+
+    <update id="edit" parameterType="com.test.renyuan.entity.User">
+        update user set name=#{name},sex=#{sex},age=#{age},password=#{password} where userid=#{userid};
+    </update>
+    <select id="selectOneUser" resultType="com.test.renyuan.entity.User">
+        SELECT * FROM user where name=#{name} and password=#{password};
+    </select>
+</mapper>
